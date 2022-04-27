@@ -26,11 +26,17 @@ namespace API
             public float damage;
             public float critDamage;
             public OrbInfo nextLevel;
+            public string description;
         }
 
         public OrbBuilder WithName(string name)
         {
             _info.name = name;
+            return this;
+        }
+        public OrbBuilder WithDescription(string description)
+        {
+            _info.description = description;
             return this;
         }
         public OrbBuilder WithDamage(int dmg)
@@ -52,7 +58,12 @@ namespace API
         public (OrbInfo, GameObject) Build()
         {
             GameObject gameObject = new GameObject();
-            
+            gameObject.hideFlags = HideFlags.HideAndDontSave;
+            gameObject.SetActive(false);
+            gameObject.AddComponent<ActivateOnCreate>();
+            var attack=gameObject.AddComponent<Attack>();
+            attack.locNameString = _info.name;
+            attack.locDescStrings = new[] { _info.description };
             Plugin.allOrbs.Add(_info, gameObject);
             return (_info,gameObject);
         }
